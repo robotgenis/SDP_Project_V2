@@ -37,15 +37,6 @@ int main() {
     levels.setLevel(LEVEL_MAIN_MENU);
     levels.draw();
 
-    // GameObject a(0,0,100,100);
-    // // a = new GameObject(50,50,100,100);
-    // a.drawObject();
-    //LCD.WriteAt(Level1Test.level(), 0, 0);
-
-    // GameLevel a = Level1::level();
-
-    // a.drawGameObjects();
-
     while(levels.level != LEVEL_EXIT) {
         clicked = LCD.Touch(&x, &y);
         
@@ -126,7 +117,7 @@ void Levels::draw(){
         case LEVEL_1: 
             LCD.SetBackgroundColor(BLACK);
             LCD.WriteAt("Welcome to Level 1", 80, 60);
-            // currentLevel = new GameLevel();
+            currentLevel = LEVEL1::createLevel();
 
             break;
         case LEVEL_2: 
@@ -192,6 +183,9 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;
+        case LEVEL_1:
+            LCD.Clear();
+            currentLevel.drawGameObjects();
         
     }
         

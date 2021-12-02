@@ -9,6 +9,12 @@ class GameObject{
             w = w1;
             h = h1;
         };
+        GameObject(){
+            x = 0;
+            y = 0;
+            w = 0;
+            h = 0;
+        }
         void drawObject();
         //void collision(GameObject *obj);
         int x, y, w, h;
@@ -26,7 +32,6 @@ class Player: public GameObject{
 
 class GameLevel{
     public:
-        GameLevel();
         void drawGameObjects();
         GameObject objects[20];
         int objCount = 0;

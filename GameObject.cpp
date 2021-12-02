@@ -14,6 +14,6 @@ void Player::drawPlayer(){
 
 void GameLevel::drawGameObjects(){
     for(int i = 0; i< objCount; i++){
-        objects[i].drawObject()
+        objects[i].drawObject();
     }
 }

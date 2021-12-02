@@ -316,7 +316,7 @@ void FEHLCD::DrawLine(int x1, int y1, int x2, int y2)
         return;
     }
     // Using a float to be more precise, will cast the end result to an int
-    float slope = (y2 - y1) / (x2 - x1);
+    float slope = ((float) y2 - y1) / ((float) x2 - x1);
 
     int xVal, yVal, startX, endX, startY, endY;
 
