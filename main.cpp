@@ -45,7 +45,14 @@ int main() {
         LCD.Update();
 
         if(clicked){
-            while(LCD.Touch(&x, &y)){};
+            if(levels.level == LEVEL_MAIN_MENU ||
+                levels.level == LEVEL_MAIN_MENU ||
+                levels.level == LEVEL_LEVEL_SELECT ||
+                levels.level == LEVEL_DISPLAY_STATS ||
+                levels.level == LEVEL_DIRECTIONS ||
+                levels.level == LEVEL_CREDITS
+            )
+                while(LCD.Touch(&x, &y)){};
         }
     }
 

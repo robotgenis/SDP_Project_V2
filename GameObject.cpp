@@ -16,4 +16,5 @@ void GameLevel::drawGameObjects(){
     for(int i = 0; i< objCount; i++){
         objects[i].drawObject();
     }
+    player.drawPlayer();
 }

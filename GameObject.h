@@ -14,7 +14,7 @@ class GameObject{
             y = 0;
             w = 0;
             h = 0;
-        }
+        };
         void drawObject();
         //void collision(GameObject *obj);
         int x, y, w, h;
@@ -25,6 +25,7 @@ class GameObject{
 class Player: public GameObject{
     public:
         Player(int x1, int y1, int w1, int h1) : GameObject(x1, y1, w1, h1){};
+        Player():GameObject(){};
         void drawPlayer();
         float xVelocity, yVelocity;
     private:
@@ -34,6 +35,7 @@ class GameLevel{
     public:
         void drawGameObjects();
         GameObject objects[20];
+        Player player;
         int objCount = 0;
     private:
         
