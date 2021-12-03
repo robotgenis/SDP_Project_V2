@@ -2,6 +2,7 @@
 #include "level1.h"
 #include "GameObject.h"
 #include "level1.h"
+#include "FEHUtility.h"
 
 #define LEVEL_MAIN_MENU 1
 #define LEVEL_LEVEL_SELECT 2
@@ -20,7 +21,9 @@ class Levels{
         void setLevel(int l);
         GameLevel currentLevel;
         int level;
+        float prevTime;
 };
+
 
 
 /*
@@ -33,6 +36,8 @@ int main() {
 
     //define menu object
     Levels levels;
+
+    levels.prevTime = TimeNow();
 
     levels.setLevel(LEVEL_MAIN_MENU);
     levels.draw();
@@ -67,7 +72,7 @@ void Levels::draw(){
             //Start Button
             LCD.SetFontColor(GREEN);
             LCD.DrawRectangle(5, 5, 140, 50);
-            LCD.WriteAt("Game Start", 10, 25);
+            LCD.WriteAt("Game Start" , 10, 25);
             //Stats Button
             LCD.SetFontColor(YELLOW);
             LCD.DrawRectangle(175, 5, 140, 50);
@@ -125,6 +130,7 @@ void Levels::draw(){
             LCD.SetBackgroundColor(BLACK);
             LCD.WriteAt("Welcome to Level 1", 80, 60);
             currentLevel = LEVEL1::createLevel();
+            prevTime = TimeNow();
 
             break;
         case LEVEL_2: 
@@ -191,8 +197,12 @@ void Levels::update(int x, int y, bool clicked){
             }
             break;
         case LEVEL_1:
+            float t = TimeNow();
             LCD.Clear();
+            currentLevel.update(x, y, clicked, t - prevTime);
             currentLevel.drawGameObjects();
+
+            prevTime = t;
         
     }
         
