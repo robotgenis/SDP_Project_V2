@@ -12,8 +12,8 @@
 #define LEVEL_1 6
 #define LEVEL_2 7
 #define LEVEL_EXIT 8
-
-
+#define LEVEL_DEATH_1 9
+#define LEVEL_COMPLETE_1 10
 class Levels{
     public:
         void draw();
@@ -22,6 +22,8 @@ class Levels{
         GameLevel currentLevel;
         int level;
         float prevTime;
+        int Level1_Deaths, Level1_Points;
+        bool Level1_Completed = false;
 };
 
 
@@ -41,13 +43,15 @@ int main() {
 
     levels.setLevel(LEVEL_MAIN_MENU);
     levels.draw();
-
+    
     while(levels.level != LEVEL_EXIT) {
+        Sleep(0.01);
+
         clicked = LCD.Touch(&x, &y);
         
         levels.update(x, y, clicked);
         
-        LCD.Update();
+        //LCD.Update();
 
         if(clicked){
             if(levels.level == LEVEL_MAIN_MENU ||
@@ -61,14 +65,17 @@ int main() {
         }
     }
 
+
     return 0;
 }
 
 //Funciton for Menu class
 void Levels::draw(){
+    int x,y;
     switch(level){
         case LEVEL_MAIN_MENU: 
             LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
             //Start Button
             LCD.SetFontColor(GREEN);
             LCD.DrawRectangle(5, 5, 140, 50);
@@ -90,6 +97,7 @@ void Levels::draw(){
             break;
         case LEVEL_LEVEL_SELECT: 
             LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
             LCD.WriteAt("Play Game here", 0, 0);
             LCD.DrawRectangle(80, 60, 160, 50);
             LCD.WriteAt("Level 1", 100, 800);
@@ -100,6 +108,8 @@ void Levels::draw(){
             LCD.WriteAt("Main Menu", 100, 200);
             break;
         case LEVEL_DISPLAY_STATS:
+            LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
             LCD.WriteAt("Wins: 0", 100, 50);
             LCD.WriteAt("Deaths: 0", 100, 100);
             LCD.SetFontColor(GREEN);
@@ -107,6 +117,8 @@ void Levels::draw(){
             LCD.WriteAt("Main Menu", 120, 150);
             break;
         case LEVEL_CREDITS:
+            LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
             LCD.WriteAt("Created By: ", 10, 180);
             LCD.WriteAt("AADIT S. & BRANDON Y.", 10, 200);
             LCD.SetFontColor(GREEN);
@@ -114,6 +126,8 @@ void Levels::draw(){
             LCD.WriteAt("Main Menu", 120, 120);
             break;
         case LEVEL_DIRECTIONS:
+            LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
             LCD.WriteAt("Directions", 0, 0);
             LCD.WriteAt("The Goal is to reach the", 0, 20);
             LCD.WriteAt("flag at the end of each", 0, 40);
@@ -128,14 +142,50 @@ void Levels::draw(){
             break;
         case LEVEL_1: 
             LCD.SetBackgroundColor(LIGHTBLUE);
-            LCD.WriteAt("Welcome to Level 1", 80, 60);
+            LCD.Clear();
+            LCD.WriteAt("Welcome to Level 1", 70, 60);
+            Sleep(0.5);
             currentLevel = LEVEL1::createLevel();
             prevTime = TimeNow();
 
             break;
         case LEVEL_2: 
             LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
             LCD.WriteAt("Welcome to Level 2", 80, 60);
+            break;
+
+        case LEVEL_DEATH_1: 
+            LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
+
+            LCD.SetFontColor(RED);
+            LCD.WriteAt("YOU DIED", 120, 10);
+            Level1_Deaths++;
+            LCD.WriteAt("Deaths: ", 130, 30);
+            LCD.WriteAt(Level1_Deaths, 200, 30);
+            LCD.SetFontColor(GREEN);
+            LCD.DrawRectangle(100, 100, 160, 50);
+            LCD.WriteAt("Main Menu", 120, 120);
+             LCD.DrawRectangle(100, 160, 160, 50);
+            LCD.WriteAt("Respawn", 120, 180);
+            while(LCD.Touch(&x, &y)){};
+            break;
+        case LEVEL_COMPLETE_1:
+            LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
+            LCD.SetFontColor(GREEN);
+            LCD.DrawRectangle(100, 160, 160, 50);
+            LCD.WriteAt("Main Menu", 120, 180);
+            if(!Level1_Completed){
+                Level1_Completed = true;
+                Level1_Points +=1000;
+            }
+            
+            LCD.WriteAt("Points:", 120, 50);
+            LCD.WriteAt(Level1_Points, 210, 50);
+
+
             break;
     }
     
@@ -143,6 +193,8 @@ void Levels::draw(){
 
 
 void Levels::update(int x, int y, bool clicked){
+    float t = 0;
+    int state = STATE_NONE;
     switch(level){
         case LEVEL_MAIN_MENU:
             if(clicked){
@@ -197,21 +249,50 @@ void Levels::update(int x, int y, bool clicked){
             }
             break;
         case LEVEL_1:
-            float t = TimeNow();
+            t = TimeNow();
             LCD.Clear();
-            currentLevel.update(x, y, clicked, t - prevTime);
-            currentLevel.drawGameObjects();
+            // LCD.SetFontColor(0x9e8e52);
+            // LCD.FillRectangle(28,170,4, 30);
+            // LCD.SetFontColor(0xc9e89e);
+            // LCD.FillCircle(30,170,5);
+            
+            // LCD.SetFontColor(0x9e8e52);
+            // LCD.FillRectangle(43,170,4, 30);
+            // LCD.SetFontColor(0xc9e89e);
+            // LCD.FillCircle(45,170,5);
+            state = currentLevel.update(x, y, clicked, t - prevTime);
+            if(state == STATE_DEATH){
+                setLevel(LEVEL_DEATH_1);
+            }else if(state == STATE_COMPLETE){
+                setLevel(LEVEL_COMPLETE_1);
+            }else{
+                currentLevel.drawGameObjects();
+            }
 
             prevTime = t;
             break;
-        
+        case LEVEL_DEATH_1:
+            if(clicked){
+                if(x>100 && x<260 && y>100 && y<150){
+                    setLevel(LEVEL_MAIN_MENU);
+                }
+                else if(x>100 && x<260 && y>160 && y<210){
+                    setLevel(LEVEL_1);
+                }
+            }
+            break;  
+        case LEVEL_COMPLETE_1:
+            if(clicked){
+                if(x>100 && x<260 && y>160 && y<210){
+                    setLevel(LEVEL_MAIN_MENU);
+                }
+            }
+            break;  
+          
     }
-        
-        
 }
 
 void Levels::setLevel(int l){
     level = l;
-    LCD.Clear();
     draw();
 }

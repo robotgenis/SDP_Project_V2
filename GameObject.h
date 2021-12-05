@@ -13,6 +13,12 @@
 #define STYLE_GRASS 1
 #define STYLE_PLAYER 2
 #define STYLE_BOX 3
+#define STYLE_PLATFORM 4
+#define STYLE_FLAG 5
+
+#define STATE_NONE 0
+#define STATE_DEATH 1
+#define STATE_COMPLETE 2
 
 class GameObject{
     public:
@@ -45,7 +51,7 @@ class Player: public GameObject{
         Player(int x1, int y1, int w1, int h1) : GameObject(x1, y1, w1, h1, STYLE_PLAYER){};
         Player():GameObject(){};
         
-        void updateCollision(GameObject *obj);
+        int updateCollision(GameObject *obj);
         bool onGround(GameObject *obj);
         void updatePlayer(int xMouse, int yMouse, bool clicked, int offsetX, int offsetY, bool onGround, float changeTime);
         float xVelocity, yVelocity, jumpVelocity, accel;
@@ -55,7 +61,7 @@ class Player: public GameObject{
 class GameLevel{
     public:
         void drawGameObjects();
-        void update(int xMouse, int yMouse, bool clicked, float changeTime);
+        int update(int xMouse, int yMouse, bool clicked, float changeTime);
         GameObject objects[20];
         Player player;
         int objCount = 0;

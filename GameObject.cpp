@@ -12,7 +12,7 @@ void GameObject::drawObject(int offsetX, int offsetY){
     if(xTemp + w < 0) return;
     if(xTemp > SCREEN_WIDTH) return;
 
-    if(yTemp+h < 0) return;
+    if(yTemp + h < 0) return;
     if(yTemp > SCREEN_HEIGHT) return;
 
     //Start position
@@ -37,13 +37,35 @@ void GameObject::drawObject(int offsetX, int offsetY){
             LCD.FillRectangle(x1, y1, w1, h1);
             break;
         case STYLE_BOX:
-            LCD.SetFontColor(LIGHTGRAY);
+            LCD.SetFontColor(0xc49845);
             LCD.FillRectangle(x1, y1, w1, h1);
-            LCD.SetFontColor(DARKGRAY);
-            LCD.DrawLine(x1, y1, x2, y1);
-            LCD.DrawLine(x2, y1, x2, y2);
-            LCD.DrawLine(x2, y2, x1, y2);
-            LCD.DrawLine(x1, y2, x2, y1);
+            LCD.SetFontColor(0x8a692c);
+            LCD.DrawLine(x1, y1, x2 - 1, y1);
+            LCD.DrawLine(x2 - 1, y1, x2 - 1, y2 - 1);
+            LCD.DrawLine(x2 - 1, y2 - 1, x1, y2 - 1);
+            LCD.DrawLine(x1, y2 - 1, x1, y1);
+            
+            // LCD.DrawLine(x1, y1, x2 - 1, y2 - 6);
+            // LCD.DrawLine(x1, y2 - 1, x2 - 1, y1 + 4);
+            break;
+        case STYLE_PLATFORM:
+            LCD.SetFontColor(0x8c8272);
+            LCD.FillRectangle(x1, y1, w1, h1);
+            LCD.SetFontColor(0xc2b5a1);
+            LCD.DrawLine(x1, y1, x2-1, y1);
+            LCD.DrawLine(x1, y1+1, x2-1, y1+1);
+            break;
+        case STYLE_FLAG:
+            LCD.SetFontColor(BLACK);
+            if(xTemp + w <= SCREEN_WIDTH){
+                LCD.DrawLine(xTemp + w, y1, xTemp + w, y2);
+            }
+
+            int y3 = yTemp + 15;
+            if(y3 >= y1){
+                LCD.FillRectangle(x1, y1, w1, y3 - y1);
+            }
+            break;
     }
 
 }
@@ -64,33 +86,42 @@ int GameObject::bottom(){
     return y + h;
 }
 
-void Player::updateCollision(GameObject *obj){
+int Player::updateCollision(GameObject *obj){
     int l = left() - obj->right();
     int r = obj->left() - right();
     int t = top() - obj->bottom();
     int b = obj->top() - bottom();
-
-    if(l <= 0 && r <= 0 && t <= 0 && b <= 0){
-        if(l >= r && l >= t && l >= b){
-            //left collision
-            x = obj->right();
-        }else if(r >= b && r >= t){
-            //right collision
-            x = obj->left() - w;
-        }else if(b >= t){
-            // bottom collision
-            y = obj->top() - h;
-            if(yVelocity > 0){
-                yVelocity = 0;
-            }
-        }else{
-            //top collision
-            y = obj->bottom();
-            if(yVelocity < 0){
-                yVelocity = 0;
+    
+    if(obj->style == STYLE_FLAG){
+        if(l <= 0 && r <= 0 && t <= 0 && b <= 0){
+            //Level Complete
+            return STATE_COMPLETE;
+        }
+    }
+    else{
+        if(l <= 0 && r <= 0 && t <= 0 && b <= 0){
+            if(l >= r && l >= t && l >= b){
+                //left collision
+                x = obj->right();
+            }else if(r >= b && r >= t){
+                //right collision
+                x = obj->left() - w;
+            }else if(b >= t){
+                // bottom collision
+                y = obj->top() - h;
+                if(yVelocity > 0){
+                    yVelocity = 0;
+                }
+            }else{
+                //top collision
+                y = obj->bottom();
+                if(yVelocity < 0){
+                    yVelocity = 0;
+                }
             }
         }
     }
+    return STATE_NONE;
 }
 
 bool Player::onGround(GameObject *obj){
@@ -147,7 +178,7 @@ void GameLevel::drawGameObjects(){
     player.drawObject(offsetX, offsetY);
 }
 
-void GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
+int GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
     //Check for player on ground with each object
     bool onGround = false;
     for(int i = 0; i < objCount; i++){
@@ -164,7 +195,11 @@ void GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
 
     //Collision loop between player and any object
     for(int i = 0; i < objCount; i++){
-        player.updateCollision(&objects[i]);
+        int s = player.updateCollision(&objects[i]);
+
+        if(s == STATE_COMPLETE){
+            return STATE_COMPLETE;
+        }
     }
 
     //update offset of window
@@ -189,4 +224,9 @@ void GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
         offsetY -= offsetRange - top;
         if(offsetY < offsetYMin) offsetY = offsetYMin;
     }
+
+    if(player.y > offsetYMax + SCREEN_HEIGHT){
+        return STATE_DEATH;
+    }
+    return STATE_NONE;
 }
