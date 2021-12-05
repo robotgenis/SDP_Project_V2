@@ -127,7 +127,7 @@ void Levels::draw(){
             LCD.WriteAt("Main Menu", 120, 210);
             break;
         case LEVEL_1: 
-            LCD.SetBackgroundColor(BLACK);
+            LCD.SetBackgroundColor(LIGHTBLUE);
             LCD.WriteAt("Welcome to Level 1", 80, 60);
             currentLevel = LEVEL1::createLevel();
             prevTime = TimeNow();
@@ -203,6 +203,7 @@ void Levels::update(int x, int y, bool clicked){
             currentLevel.drawGameObjects();
 
             prevTime = t;
+            break;
         
     }
         

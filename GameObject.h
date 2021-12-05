@@ -7,39 +7,47 @@
 #define COLLIDE_LEFT 3
 #define COLLIDE_TOP 4
 
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+
+#define STYLE_GRASS 1
+#define STYLE_PLAYER 2
+#define STYLE_BOX 3
+
 class GameObject{
     public:
-        GameObject(int x1, int y1, int w1, int h1){
+        GameObject(int x1, int y1, int w1, int h1, int s){
             x = x1;
             y = y1;
             w = w1;
             h = h1;
+            style = s;
         };
         GameObject(){
             x = 0;
             y = 0;
             w = 0;
             h = 0;
+            style = STYLE_GRASS;
         };
-        void drawObject();
+        void drawObject(int offsetX, int offsetY);
         int right();
         int left();
         int top();
         int bottom();
-        int x, y, w, h;
+        int x, y, w, h, style;
     private:
         
 };
 
 class Player: public GameObject{
     public:
-        Player(int x1, int y1, int w1, int h1) : GameObject(x1, y1, w1, h1){};
+        Player(int x1, int y1, int w1, int h1) : GameObject(x1, y1, w1, h1, STYLE_PLAYER){};
         Player():GameObject(){};
         
         void updateCollision(GameObject *obj);
         bool onGround(GameObject *obj);
-        void drawPlayer();
-        void updatePlayer(int xMouse, int yMouse, bool clicked, bool onGround, float changeTime);
+        void updatePlayer(int xMouse, int yMouse, bool clicked, int offsetX, int offsetY, bool onGround, float changeTime);
         float xVelocity, yVelocity, jumpVelocity, accel;
     private:
 };
@@ -51,6 +59,8 @@ class GameLevel{
         GameObject objects[20];
         Player player;
         int objCount = 0;
+        int offsetX, offsetY;
+        int offsetXMin, offsetXMax, offsetYMin, offsetYMax, offsetRange;
     private:
         
 };
