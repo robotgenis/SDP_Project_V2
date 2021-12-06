@@ -59,6 +59,12 @@ GameLevel LEVEL2::createLevel(){
 
 	level.loopTime = 0;
 	level.loopTimeTotal = 6;
+
+	level.levelTime = 45;
+	level.playTime = 0;
+	
+	level.levelPoints = 200;
+	level.levelPointsTimeMulti = 10;
 	
 	return level;
 }

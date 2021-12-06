@@ -26,7 +26,8 @@ void GameObject::drawObject(int offsetX, int offsetY){
     int w1 = x2 - x1;
     int h1 = y2 - y1;
 
-    int y3;
+    int x3, y3, x4, y4;
+    int i;
 
     switch(style){
         case STYLE_GRASS:
@@ -68,8 +69,62 @@ void GameObject::drawObject(int offsetX, int offsetY){
             }
             break;
         case STYLE_DEATH:
-            LCD.SetFontColor(GOLDENROD);
-            LCD.FillRectangle(x1, y1, w1, h1);
+            x1 = xTemp;
+            y1 = yTemp;
+            x2 = xTemp + 3;
+            y2 = yTemp + 3;
+            x3 = xTemp + w - 3;
+            y3 = yTemp + h - 3;
+            x4 = xTemp + w - 1;
+            y4 = yTemp + h - 1;
+            
+            x1 = (x1 < 0) ? 0 : x1;
+            y1 = (y1 < 0) ? 0 : y1;
+            x1 = (x1 > SCREEN_WIDTH) ? SCREEN_WIDTH : x1;
+            y1 = (y1 > SCREEN_HEIGHT) ? SCREEN_HEIGHT : y1;
+            
+            x2 = (x2 < 0) ? 0 : x2;
+            y2 = (y2 < 0) ? 0 : y2;
+            x2 = (x2 > SCREEN_WIDTH) ? SCREEN_WIDTH : x2;
+            y2 = (y2 > SCREEN_HEIGHT) ? SCREEN_HEIGHT : y2;
+            
+            x3 = (x3 < 0) ? 0 : x3;
+            y3 = (y3 < 0) ? 0 : y3;
+            x3 = (x3 > SCREEN_WIDTH) ? SCREEN_WIDTH : x3;
+            y3 = (y3 > SCREEN_HEIGHT) ? SCREEN_HEIGHT : y3;
+            
+            x4 = (x4 < 0) ? 0 : x4;
+            y4 = (y4 < 0) ? 0 : y4;
+            x4 = (x4 > SCREEN_WIDTH) ? SCREEN_WIDTH : x4;
+            y4 = (y4 > SCREEN_HEIGHT) ? SCREEN_HEIGHT : y4;
+
+            LCD.SetFontColor(0x7e00e6);
+            
+            for(i = y2; i < y3; i += 3){
+                LCD.DrawLine(x1, i, x2, i);
+            }
+
+            for(i = y2; i < y3; i += 3){
+                LCD.DrawLine(x3, i, x4, i);
+            }
+
+            for(i = x2; i < x3; i += 3){
+                LCD.DrawLine(i, y1, i, y2);
+            }
+
+            for(i = x2; i < x3; i += 3){
+                LCD.DrawLine(i, y3, i, y4);
+            }
+
+            LCD.FillRectangle(x2, y2, x3 - x2, y3 - y2);
+            break;
+        case STYLE_TREE_LEAVES:
+            LCD.SetFontColor(0xc9e89e);
+            LCD.FillRectangle(x1,y1,w1, h1);
+            break;
+        case STYLE_TREE_TRUNK:
+            LCD.SetFontColor(0x9e8e52);
+            LCD.FillRectangle(x1,y1,w1, h1);
             break;
     }
 }
@@ -197,11 +252,32 @@ void GameLevel::drawGameObjects(){
         objects[i].drawObject(offsetX, offsetY);
     }
     player.drawObject(offsetX, offsetY);
+
+    LCD.SetFontColor(GRAY);
+    LCD.FillRectangle(0, 0, 30, 20);
+    LCD.SetFontColor(YELLOW);
+    int t = levelTime;
+    LCD.WriteAt(t, 2, 2);
+
+    LCD.SetFontColor(GRAY);
+    LCD.DrawRectangle(305, 0, 15, 15);
+    LCD.FillRectangle(305,0,15,15);
+    LCD.SetFontColor(DARKGRAY);
+    LCD.DrawHorizontalLine(6, 307, 314);
+    LCD.DrawHorizontalLine(7, 307, 314);
+    LCD.DrawLine(310, 3, 315, 6);
+    LCD.DrawLine(315, 8, 310, 11);
 }
 
 int GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
     //move moving targets
     loopTime += changeTime;
+    levelTime -= changeTime;
+    playTime += changeTime;
+
+    if(levelTime <= 0){
+        return STATE_DEATH;
+    }
 
     if(loopTime >= loopTimeTotal){
         loopTime = 0;
@@ -221,9 +297,9 @@ int GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
        objects[i].updateTimeDelta(percentOfAnimation);   
     }
 
-    // if(player.yVelocity != 0.3){
-    //     onGround = false;
-    // }
+    if(player.yVelocity < 1){
+        onGround = false;
+    }
 
     // Update player movement
     player.updatePlayer(xMouse, yMouse, clicked, offsetX, offsetY, onGround, changeTime);

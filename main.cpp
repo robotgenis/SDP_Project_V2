@@ -14,9 +14,9 @@
 #define LEVEL_2 7
 #define LEVEL_EXIT 8
 #define LEVEL_DEATH_1 9
-#define LEVEL_COMPLETE_1 10
+#define LEVEL_COMPLETE 10
 #define LEVEL_DEATH_2 11
-#define LEVEL_COMPLETE_2 12
+
 class Levels{
     public:
         void draw();
@@ -25,8 +25,8 @@ class Levels{
         GameLevel currentLevel;
         int level;
         float prevTime;
-        int Level1_Deaths, Level1_Points;
-        bool Level1_Completed = false;
+        int points, deaths;
+        float totalPlayTime;
 };
 
 
@@ -91,7 +91,7 @@ void Levels::draw(){
             //Exit Button
             LCD.SetFontColor(RED);
             LCD.DrawRectangle(5, 70, 140, 50);
-            LCD.WriteAt("Credits", 45, 90);
+            LCD.WriteAt("Credits", 35, 90);
             //Directions Button
             LCD.SetFontColor(WHITE);
             LCD.DrawRectangle(175, 70, 140, 50);
@@ -101,7 +101,7 @@ void Levels::draw(){
         case LEVEL_LEVEL_SELECT: 
             LCD.SetBackgroundColor(BLACK);
             LCD.Clear();
-            LCD.WriteAt("Play Game here", 0, 0);
+            LCD.WriteAt("Level Select", 5, 5);
             LCD.DrawRectangle(80, 60, 160, 50);
             LCD.WriteAt("Level 1", 100, 800);
             LCD.DrawRectangle(80, 120, 160, 50);
@@ -113,11 +113,15 @@ void Levels::draw(){
         case LEVEL_DISPLAY_STATS:
             LCD.SetBackgroundColor(BLACK);
             LCD.Clear();
-            LCD.WriteAt("Wins: 0", 100, 50);
-            LCD.WriteAt("Deaths: 0", 100, 100);
+            LCD.WriteAt("Points:", 50, 50);
+            LCD.WriteAt(points, 150, 50);
+            LCD.WriteAt("Deaths:", 50, 65);
+            LCD.WriteAt(deaths, 150, 65);
+            LCD.WriteAt("Time Played:", 50, 80);
+            LCD.WriteAt(totalPlayTime, 200, 80);
             LCD.SetFontColor(GREEN);
             LCD.DrawRectangle(100, 130, 160, 50);
-            LCD.WriteAt("Main Menu", 120, 150);
+            LCD.WriteAt("Main Menu", 120, 130);
             break;
         case LEVEL_CREDITS:
             LCD.SetBackgroundColor(BLACK);
@@ -141,35 +145,36 @@ void Levels::draw(){
             LCD.WriteAt("player. ", 0, 140);
             LCD.SetFontColor(GREEN);
             LCD.DrawRectangle(100, 180, 160, 50);
-            LCD.WriteAt("Main Menu", 120, 210);
+            LCD.WriteAt("Main Menu", 130, 200);
             break;
         case LEVEL_1: 
             LCD.SetBackgroundColor(LIGHTBLUE);
             LCD.Clear();
-            LCD.WriteAt("Welcome to Level 1", 70, 60);
+            LCD.WriteAt("Welcome to Level 1", 40, 60);
             Sleep(0.5);
             currentLevel = LEVEL1::createLevel();
             prevTime = TimeNow();
 
             break;
         case LEVEL_2: 
-            LCD.SetBackgroundColor(LIGHTBLUE);
+            LCD.SetBackgroundColor(LIGHTGRAY);
             LCD.Clear();
-            LCD.WriteAt("Welcome to Level 2", 70, 60);
+            LCD.WriteAt("Welcome to Level 2", 40, 60);
             Sleep(0.5);
             currentLevel = LEVEL2::createLevel();
             prevTime = TimeNow();
             break;
 
         case LEVEL_DEATH_1: 
+            deaths += 1;
+            totalPlayTime += currentLevel.playTime;
             LCD.SetBackgroundColor(BLACK);
             LCD.Clear();
 
             LCD.SetFontColor(RED);
             LCD.WriteAt("YOU DIED", 120, 10);
-            Level1_Deaths++;
-            LCD.WriteAt("Deaths: ", 130, 30);
-            LCD.WriteAt(Level1_Deaths, 200, 30);
+            LCD.WriteAt("Deaths: ", 100, 30);
+            LCD.WriteAt(deaths, 200, 30);
             LCD.SetFontColor(GREEN);
             LCD.DrawRectangle(100, 100, 160, 50);
             LCD.WriteAt("Main Menu", 120, 120);
@@ -177,22 +182,37 @@ void Levels::draw(){
             LCD.WriteAt("Respawn", 120, 180);
             while(LCD.Touch(&x, &y)){};
             break;
-        case LEVEL_COMPLETE_1:
+        case LEVEL_COMPLETE:
+            points += (int)(currentLevel.levelPoints + currentLevel.levelPointsTimeMulti * currentLevel.levelTime);
+            totalPlayTime = currentLevel.playTime;
+
             LCD.SetBackgroundColor(BLACK);
             LCD.Clear();
             LCD.SetFontColor(GREEN);
             LCD.DrawRectangle(100, 160, 160, 50);
             LCD.WriteAt("Main Menu", 120, 180);
-            if(!Level1_Completed){
-                Level1_Completed = true;
-                Level1_Points +=1000;
-            }
-            
-            LCD.WriteAt("Points:", 120, 50);
-            LCD.WriteAt(Level1_Points, 210, 50);
-
-
+            LCD.SetFontColor(WHITE);
+            LCD.WriteAt("Points Earned:", 60, 50);
+            LCD.WriteAt((int)(currentLevel.levelPoints + currentLevel.levelPointsTimeMulti * currentLevel.levelTime), 250, 50);
             break;
+        case LEVEL_DEATH_2:
+            deaths += 1;
+            totalPlayTime += currentLevel.playTime;
+            LCD.SetBackgroundColor(BLACK);
+            LCD.Clear();
+
+            LCD.SetFontColor(RED);
+            LCD.WriteAt("YOU DIED", 120, 10);
+            LCD.WriteAt("Deaths: ", 100, 30);
+            LCD.WriteAt(deaths, 200, 30);
+            LCD.SetFontColor(GREEN);
+            LCD.DrawRectangle(100, 100, 160, 50);
+            LCD.WriteAt("Main Menu", 120, 120);
+            LCD.DrawRectangle(100, 160, 160, 50);
+            LCD.WriteAt("Respawn", 120, 180);
+            while(LCD.Touch(&x, &y)){};
+            break;
+
     }
     
 }
@@ -254,16 +274,6 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;
-            
-            // LCD.SetFontColor(0x9e8e52);
-            // LCD.FillRectangle(28,170,4, 30);
-            // LCD.SetFontColor(0xc9e89e);
-            // LCD.FillCircle(30,170,5);
-            
-            // LCD.SetFontColor(0x9e8e52);
-            // LCD.FillRectangle(43,170,4, 30);
-            // LCD.SetFontColor(0xc9e89e);
-            // LCD.FillCircle(45,170,5);
         case LEVEL_1:
             t = TimeNow();
             LCD.Clear();
@@ -271,9 +281,15 @@ void Levels::update(int x, int y, bool clicked){
             if(state == STATE_DEATH){
                 setLevel(LEVEL_DEATH_1);
             }else if(state == STATE_COMPLETE){
-                setLevel(LEVEL_COMPLETE_1);
+                setLevel(LEVEL_COMPLETE);
             }else{
                 currentLevel.drawGameObjects();
+            }
+            if(clicked){
+                if(x>305 && x<320 && y>0 && y<15){
+                    totalPlayTime += currentLevel.playTime;
+                    setLevel(LEVEL_MAIN_MENU);
+                }
             }
             prevTime = t;
             break;
@@ -287,7 +303,17 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;  
-        case LEVEL_COMPLETE_1:
+        case LEVEL_DEATH_2:
+            if(clicked){
+                if(x>100 && x<260 && y>100 && y<150){
+                    setLevel(LEVEL_MAIN_MENU);
+                }
+                else if(x>100 && x<260 && y>160 && y<210){
+                    setLevel(LEVEL_2);
+                }
+            }
+            break;  
+        case LEVEL_COMPLETE:
             if(clicked){
                 if(x>100 && x<260 && y>160 && y<210){
                     setLevel(LEVEL_MAIN_MENU);
@@ -301,9 +327,15 @@ void Levels::update(int x, int y, bool clicked){
             if(state == STATE_DEATH){
                 setLevel(LEVEL_DEATH_2);
             }else if(state == STATE_COMPLETE){
-                setLevel(LEVEL_COMPLETE_2);
+                setLevel(LEVEL_COMPLETE);
             }else{
                 currentLevel.drawGameObjects();
+            }
+            if(clicked){
+                if(x>305 && x<320 && y>0 && y<15){
+                    totalPlayTime += currentLevel.playTime;
+                    setLevel(LEVEL_MAIN_MENU);
+                }
             }
             prevTime = t;
             break;

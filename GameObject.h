@@ -16,6 +16,8 @@
 #define STYLE_PLATFORM 4
 #define STYLE_FLAG 5
 #define STYLE_DEATH 6
+#define STYLE_TREE_TRUNK 7
+#define STYLE_TREE_LEAVES 8
 
 #define STATE_NONE 0
 #define STATE_DEATH 1
@@ -82,12 +84,13 @@ class GameLevel{
     public:
         void drawGameObjects();
         int update(int xMouse, int yMouse, bool clicked, float changeTime);
-        GameObject objects[20];
+        GameObject objects[30];
         Player player;
         int objCount = 0;
         int offsetX, offsetY;
         int offsetXMin, offsetXMax, offsetYMin, offsetYMax, offsetRange;
-        float loopTime, loopTimeTotal;
+        float loopTime, loopTimeTotal, levelTime, playTime;
+        int levelPoints, levelPointsTimeMulti;
     private:
         
 };
