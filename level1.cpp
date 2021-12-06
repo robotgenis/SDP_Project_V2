@@ -26,11 +26,13 @@ GameLevel LEVEL1::createLevel(){
 	level.objects[13] = GameObject(900,10,50,10, STYLE_PLATFORM);
 	level.objects[14] = GameObject(1000,-40,50,10, STYLE_PLATFORM);
 	level.objects[15] = GameObject(1050,-100,10,340, STYLE_PLATFORM);
-	
-	// level.objects[16] = GameObject(1020,-70,20,30, STYLE_FLAG);
-	level.objects[16] = GameObject(420,70,20,30, STYLE_FLAG);
+	//Flag
+	level.objects[16] = GameObject(1020,-70,20,30, STYLE_FLAG);
+	//moving objects
+	level.objects[17] = GameObject(200,0,20, 100, STYLE_DEATH, 100, 0);
+	level.objects[18] = GameObject(965,-100,20, 100, STYLE_DEATH, 240, 0);
 
-	level.objCount = 17;
+	level.objCount = 19;
 
 	level.player = Player(20,180, 20, 20);
 
@@ -47,6 +49,9 @@ GameLevel LEVEL1::createLevel(){
 	level.offsetYMin = -100;
 	level.offsetYMax = 0;
 	level.offsetRange = 100;
+
+	level.loopTime = 0;
+	level.loopTimeTotal = 6;
 	
 	return level;
 }

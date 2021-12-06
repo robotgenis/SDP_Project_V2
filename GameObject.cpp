@@ -5,7 +5,6 @@
 
 void GameObject::drawObject(int offsetX, int offsetY){
 
-    
     int xTemp = x - offsetX;
     int yTemp = y - offsetY;
 
@@ -26,6 +25,8 @@ void GameObject::drawObject(int offsetX, int offsetY){
     //With and height
     int w1 = x2 - x1;
     int h1 = y2 - y1;
+
+    int y3;
 
     switch(style){
         case STYLE_GRASS:
@@ -61,13 +62,16 @@ void GameObject::drawObject(int offsetX, int offsetY){
                 LCD.DrawLine(xTemp + w, y1, xTemp + w, y2);
             }
 
-            int y3 = yTemp + 15;
+            y3 = yTemp + 15;
             if(y3 >= y1){
                 LCD.FillRectangle(x1, y1, w1, y3 - y1);
             }
             break;
+        case STYLE_DEATH:
+            LCD.SetFontColor(GOLDENROD);
+            LCD.FillRectangle(x1, y1, w1, h1);
+            break;
     }
-
 }
 
 int GameObject::right(){
@@ -86,6 +90,20 @@ int GameObject::bottom(){
     return y + h;
 }
 
+
+void GameObject::updateTimeDelta(float currTime, float totalTime){
+    float perc = currTime / totalTime * 2.0;
+
+    if(perc > 1) perc = 2 - perc;
+
+    int xTimeDelta = perc * horizDelta;
+    int yTimeDelta = perc * vertDelta;
+
+    x = sx + xTimeDelta;
+    y = sy + yTimeDelta;
+}
+
+
 int Player::updateCollision(GameObject *obj){
     int l = left() - obj->right();
     int r = obj->left() - right();
@@ -98,9 +116,14 @@ int Player::updateCollision(GameObject *obj){
             return STATE_COMPLETE;
         }
     }
-    else{
+    else if(obj->style == STYLE_DEATH){
         if(l <= 0 && r <= 0 && t <= 0 && b <= 0){
-            if(l >= r && l >= t && l >= b){
+            //Level Complete
+            return STATE_DEATH;
+        }
+    }else{
+        if(l <= 0 && r <= 0 && t <= 0 && b <= 0){
+            if(l >= r && l >= t && l >= b){ 
                 //left collision
                 x = obj->right();
             }else if(r >= b && r >= t){
@@ -179,6 +202,17 @@ void GameLevel::drawGameObjects(){
 }
 
 int GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
+    //move moving targets
+    loopTime += changeTime;
+
+    if(loopTime >= loopTimeTotal){
+        loopTime = 0;
+    }
+
+    for(int i = 0; i < objCount; i++){
+       objects[i].updateTimeDelta(loopTime, loopTimeTotal);   
+    }
+
     //Check for player on ground with each object
     bool onGround = false;
     for(int i = 0; i < objCount; i++){
@@ -199,6 +233,8 @@ int GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
 
         if(s == STATE_COMPLETE){
             return STATE_COMPLETE;
+        }else if(s == STATE_DEATH){
+            return STATE_DEATH;
         }
     }
 

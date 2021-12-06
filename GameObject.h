@@ -15,33 +15,53 @@
 #define STYLE_BOX 3
 #define STYLE_PLATFORM 4
 #define STYLE_FLAG 5
+#define STYLE_DEATH 6
 
 #define STATE_NONE 0
 #define STATE_DEATH 1
 #define STATE_COMPLETE 2
 
 class GameObject{
-    public:
-        GameObject(int x1, int y1, int w1, int h1, int s){
+    public:GameObject(int x1, int y1, int w1, int h1, int s, int vd, int hd){
             x = x1;
             y = y1;
+            sx = x;
+            sy = y;
             w = w1;
             h = h1;
             style = s;
+            horizDelta = hd;
+            vertDelta = vd;
+        };
+        GameObject(int x1, int y1, int w1, int h1, int s){
+            x = x1;
+            y = y1;
+            sx = x;
+            sy = y;
+            w = w1;
+            h = h1;
+            style = s;
+            horizDelta = 0;
+            vertDelta = 0;
         };
         GameObject(){
             x = 0;
             y = 0;
+            sx = x;
+            sy = y;
             w = 0;
             h = 0;
             style = STYLE_GRASS;
+            horizDelta = 0;
+            vertDelta = 0;
         };
         void drawObject(int offsetX, int offsetY);
         int right();
         int left();
         int top();
         int bottom();
-        int x, y, w, h, style;
+        void updateTimeDelta(float currTime, float totalTime);
+        int sx, sy, x, y, w, h, style, horizDelta, vertDelta;
     private:
         
 };
@@ -67,6 +87,7 @@ class GameLevel{
         int objCount = 0;
         int offsetX, offsetY;
         int offsetXMin, offsetXMax, offsetYMin, offsetYMax, offsetRange;
+        float loopTime, loopTimeTotal;
     private:
         
 };
