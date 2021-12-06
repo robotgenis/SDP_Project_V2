@@ -15,6 +15,12 @@ GameLevel LEVEL2::createLevel(){
 	level.objects[5] = GameObject(900,140,100,100, STYLE_BOX);
 	level.objects[6] = GameObject(1080,200,80,10, STYLE_PLATFORM, -160, 0);
 	level.objects[7] = GameObject(1220,40,100,200, STYLE_BOX);
+	level.objects[8] = GameObject(1360,40,80,10, STYLE_PLATFORM, 0, 160);
+	level.objects[9] = GameObject(1460,20,20,20, STYLE_DEATH);
+	level.objects[10] = GameObject(1680,40,80,10, STYLE_PLATFORM, 0, -160);
+	level.objects[11] = GameObject(1620,20,20,20, STYLE_DEATH);
+	level.objects[12] = GameObject(1760,40,80,200, STYLE_BOX);
+	level.objects[13] = GameObject(1780,10,20,30, STYLE_FLAG);
 	// level.objects[1] = GameObject(150,150,20,50, STYLE_BOX);
 	// level.objects[2] = GameObject(360,160,40,10, STYLE_PLATFORM);
 	// level.objects[3] = GameObject(300,120,40,10, STYLE_PLATFORM);
@@ -38,7 +44,7 @@ GameLevel LEVEL2::createLevel(){
 	// level.objects[17] = GameObject(200,0,20, 100, STYLE_DEATH, 100, 0);
 	// level.objects[18] = GameObject(965,-100,20, 100, STYLE_DEATH, 240, 0);
 
-	level.objCount = 19;
+	level.objCount = 14;
 
 	level.player = Player(20,180, 20, 20);
 	// level.player = Player(910 ,100, 20, 20);
@@ -60,7 +66,7 @@ GameLevel LEVEL2::createLevel(){
 	level.loopTime = 0;
 	level.loopTimeTotal = 6;
 
-	level.levelTime = 45;
+	level.levelTime = 60;
 	level.playTime = 0;
 	
 	level.levelPoints = 200;

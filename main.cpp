@@ -41,6 +41,9 @@ int main() {
 
     //define menu object
     Levels levels;
+    levels.points = 0;
+    levels.deaths = 0;
+    levels.totalPlayTime = 0;
 
     levels.prevTime = TimeNow();
 
@@ -62,7 +65,10 @@ int main() {
                 levels.level == LEVEL_LEVEL_SELECT ||
                 levels.level == LEVEL_DISPLAY_STATS ||
                 levels.level == LEVEL_DIRECTIONS ||
-                levels.level == LEVEL_CREDITS
+                levels.level == LEVEL_CREDITS ||
+                levels.level == LEVEL_COMPLETE ||
+                levels.level == LEVEL_DEATH_1 ||
+                levels.level == LEVEL_DEATH_2
             )
                 while(LCD.Touch(&x, &y)){};
         }
