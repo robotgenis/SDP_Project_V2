@@ -60,7 +60,7 @@ class GameObject{
         int left();
         int top();
         int bottom();
-        void updateTimeDelta(float currTime, float totalTime);
+        void updateTimeDelta(float percentOfAnimation);
         int sx, sy, x, y, w, h, style, horizDelta, vertDelta;
     private:
         

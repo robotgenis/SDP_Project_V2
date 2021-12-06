@@ -2,6 +2,7 @@
 #include "level1.h"
 #include "GameObject.h"
 #include "level1.h"
+#include "level2.h"
 #include "FEHUtility.h"
 
 #define LEVEL_MAIN_MENU 1
@@ -14,6 +15,8 @@
 #define LEVEL_EXIT 8
 #define LEVEL_DEATH_1 9
 #define LEVEL_COMPLETE_1 10
+#define LEVEL_DEATH_2 11
+#define LEVEL_COMPLETE_2 12
 class Levels{
     public:
         void draw();
@@ -150,9 +153,12 @@ void Levels::draw(){
 
             break;
         case LEVEL_2: 
-            LCD.SetBackgroundColor(BLACK);
+            LCD.SetBackgroundColor(LIGHTBLUE);
             LCD.Clear();
-            LCD.WriteAt("Welcome to Level 2", 80, 60);
+            LCD.WriteAt("Welcome to Level 2", 70, 60);
+            Sleep(0.5);
+            currentLevel = LEVEL2::createLevel();
+            prevTime = TimeNow();
             break;
 
         case LEVEL_DEATH_1: 
@@ -248,9 +254,7 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;
-        case LEVEL_1:
-            t = TimeNow();
-            LCD.Clear();
+            
             // LCD.SetFontColor(0x9e8e52);
             // LCD.FillRectangle(28,170,4, 30);
             // LCD.SetFontColor(0xc9e89e);
@@ -260,6 +264,9 @@ void Levels::update(int x, int y, bool clicked){
             // LCD.FillRectangle(43,170,4, 30);
             // LCD.SetFontColor(0xc9e89e);
             // LCD.FillCircle(45,170,5);
+        case LEVEL_1:
+            t = TimeNow();
+            LCD.Clear();
             state = currentLevel.update(x, y, clicked, t - prevTime);
             if(state == STATE_DEATH){
                 setLevel(LEVEL_DEATH_1);
@@ -268,7 +275,6 @@ void Levels::update(int x, int y, bool clicked){
             }else{
                 currentLevel.drawGameObjects();
             }
-
             prevTime = t;
             break;
         case LEVEL_DEATH_1:
@@ -288,7 +294,19 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;  
-          
+        case LEVEL_2:
+            t = TimeNow();
+            LCD.Clear();
+            state = currentLevel.update(x, y, clicked, t - prevTime);
+            if(state == STATE_DEATH){
+                setLevel(LEVEL_DEATH_2);
+            }else if(state == STATE_COMPLETE){
+                setLevel(LEVEL_COMPLETE_2);
+            }else{
+                currentLevel.drawGameObjects();
+            }
+            prevTime = t;
+            break;
     }
 }
 

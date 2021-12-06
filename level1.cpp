@@ -6,7 +6,6 @@
 
 GameLevel LEVEL1::createLevel(){
 	GameLevel level;
-
 	
 	level.objects[0] = GameObject(0,200,500,40, STYLE_GRASS);
 	level.objects[1] = GameObject(150,150,20,50, STYLE_BOX);

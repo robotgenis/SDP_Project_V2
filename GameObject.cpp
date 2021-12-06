@@ -91,13 +91,11 @@ int GameObject::bottom(){
 }
 
 
-void GameObject::updateTimeDelta(float currTime, float totalTime){
-    float perc = currTime / totalTime * 2.0;
+void GameObject::updateTimeDelta(float percentOfAnimation){
+    if(percentOfAnimation > 1) percentOfAnimation = 2 - percentOfAnimation;
 
-    if(perc > 1) perc = 2 - perc;
-
-    int xTimeDelta = perc * horizDelta;
-    int yTimeDelta = perc * vertDelta;
+    int xTimeDelta = percentOfAnimation * horizDelta;
+    int yTimeDelta = percentOfAnimation * vertDelta;
 
     x = sx + xTimeDelta;
     y = sy + yTimeDelta;
@@ -132,8 +130,8 @@ int Player::updateCollision(GameObject *obj){
             }else if(b >= t){
                 // bottom collision
                 y = obj->top() - h;
-                if(yVelocity > 0){
-                    yVelocity = 0;
+                if(yVelocity >= 2){
+                    yVelocity = 2;
                 }
             }else{
                 //top collision
@@ -158,7 +156,7 @@ bool Player::onGround(GameObject *obj){
         if(b >= t && b >= l && b >= r)
             return true;
     }
-     return false;   
+    return false;   
 }
 
 void Player::updatePlayer(int xMouse, int yMouse, bool clicked, int offsetX, int offsetY, bool onGround, float changeTime){
@@ -209,9 +207,7 @@ int GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
         loopTime = 0;
     }
 
-    for(int i = 0; i < objCount; i++){
-       objects[i].updateTimeDelta(loopTime, loopTimeTotal);   
-    }
+    float percentOfAnimation = loopTime / loopTimeTotal * 2.0;
 
     //Check for player on ground with each object
     bool onGround = false;
@@ -220,9 +216,14 @@ int GameLevel::update(int xMouse, int yMouse, bool clicked, float changeTime){
             onGround = true;
         }
     }
-    if(player.yVelocity != 0){
-        onGround = false;
+
+    for(int i = 0; i < objCount; i++){
+       objects[i].updateTimeDelta(percentOfAnimation);   
     }
+
+    // if(player.yVelocity != 0.3){
+    //     onGround = false;
+    // }
 
     // Update player movement
     player.updatePlayer(xMouse, yMouse, clicked, offsetX, offsetY, onGround, changeTime);
