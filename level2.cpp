@@ -40,8 +40,8 @@ GameLevel LEVEL2::createLevel(){
 
 	level.objCount = 19;
 
-	// level.player = Player(20,180, 20, 20);
-	level.player = Player(910 ,100, 20, 20);
+	level.player = Player(20,180, 20, 20);
+	// level.player = Player(910 ,100, 20, 20);
 
 	level.player.xVelocity = 3;
 	level.player.jumpVelocity = 8;
