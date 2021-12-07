@@ -102,6 +102,9 @@ void Levels::draw(){
             LCD.SetFontColor(WHITE);
             LCD.DrawRectangle(175, 70, 140, 50);
             LCD.WriteAt("Directions", 185, 90);
+            //Title
+            LCD.WriteAt("Bloc-Jump", 100, 180);
+            LCD.DrawHorizontalLine(198, 100, 220);
             
             break;
         case LEVEL_LEVEL_SELECT: 

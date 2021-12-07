@@ -21,33 +21,10 @@ GameLevel LEVEL2::createLevel(){
 	level.objects[11] = GameObject(1620,20,20,20, STYLE_DEATH);
 	level.objects[12] = GameObject(1760,40,80,200, STYLE_BOX);
 	level.objects[13] = GameObject(1780,10,20,30, STYLE_FLAG);
-	// level.objects[1] = GameObject(150,150,20,50, STYLE_BOX);
-	// level.objects[2] = GameObject(360,160,40,10, STYLE_PLATFORM);
-	// level.objects[3] = GameObject(300,120,40,10, STYLE_PLATFORM);
-	// level.objects[4] = GameObject(400,100,100,100, STYLE_GRASS);
-	// //Open floor
-	// level.objects[5] = GameObject(560,100,40,10, STYLE_PLATFORM);
-	// level.objects[6] = GameObject(660,100,40,10, STYLE_PLATFORM);
-	// level.objects[7] = GameObject(760,100,100,140, STYLE_GRASS);
-	// //Third part
-	// level.objects[8] = GameObject(890,-100,10,290, STYLE_PLATFORM);
-	// level.objects[9] = GameObject(860,210,90,30, STYLE_GRASS);
-	// level.objects[10] = GameObject(1000,160,50,10, STYLE_PLATFORM);
-	// level.objects[11] = GameObject(900,110,50,10, STYLE_PLATFORM);
-	// level.objects[12] = GameObject(1000,60,50,10, STYLE_PLATFORM);
-	// level.objects[13] = GameObject(900,10,50,10, STYLE_PLATFORM);
-	// level.objects[14] = GameObject(1000,-40,50,10, STYLE_PLATFORM);
-	// level.objects[15] = GameObject(1050,-100,10,340, STYLE_PLATFORM);
-	// //Flag
-	// level.objects[16] = GameObject(1020,-70,20,30, STYLE_FLAG);
-	// //moving objects
-	// level.objects[17] = GameObject(200,0,20, 100, STYLE_DEATH, 100, 0);
-	// level.objects[18] = GameObject(965,-100,20, 100, STYLE_DEATH, 240, 0);
 
 	level.objCount = 14;
 
 	level.player = Player(20,180, 20, 20);
-	// level.player = Player(910 ,100, 20, 20);
 
 	level.player.xVelocity = 3;
 	level.player.jumpVelocity = 8;
