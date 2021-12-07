@@ -5,6 +5,10 @@
 #include "level2.h"
 #include "FEHUtility.h"
 
+/*
+*Define constants for levels and pages
+*Authors: Brandon Y., Aadit S.
+*/
 #define LEVEL_MAIN_MENU 1
 #define LEVEL_LEVEL_SELECT 2
 #define LEVEL_DISPLAY_STATS 3
@@ -74,9 +78,13 @@ int main() {
     
     //While user doesn't exit run program
     while(levels.level != LEVEL_EXIT) {
-        //Update scene depending on where user clicked
+        //sleep between frames
         Sleep(0.01);
+
+        //get user input
         clicked = LCD.Touch(&x, &y);
+
+        //update current page
         levels.update(x, y, clicked);
         
         //Wait for release on certain pages
@@ -281,7 +289,7 @@ void Levels::draw(){
 }
 
 /*
-*Function for Menu class
+*Function for Levels class
 *void Levels::update(int x, int y, boolean clicked) 
 *   Updates @param level depending on where user clicks
 *@param x
@@ -337,6 +345,7 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;
+        //If in stats screen
         case LEVEL_DISPLAY_STATS:
             if(clicked){
                 //Main Menu
@@ -345,6 +354,7 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;
+        //if in credits screen
         case LEVEL_CREDITS:
             if(clicked){
                 //Main Menu
@@ -353,6 +363,7 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;
+        //if in directions screen
         case LEVEL_DIRECTIONS:
             if(clicked){
                 //Main Menu
@@ -361,88 +372,136 @@ void Levels::update(int x, int y, bool clicked){
                 }
             }
             break;
+        //if in level 1
         case LEVEL_1:
+            //get current time
             t = TimeNow();
+            
+            //apply background
             LCD.Clear();
+
+            //update level
             state = currentLevel.update(x, y, clicked, t - prevTime);
+
+            //exit level coditions (completition and death)
             if(state == STATE_DEATH){
                 setLevel(LEVEL_DEATH_1);
             }else if(state == STATE_COMPLETE){
                 setLevel(LEVEL_COMPLETE);
             }else{
+                //draw entire level
                 currentLevel.drawGameObjects();
             }
+            //leave button in top right corner
             if(x>305 && x<320 && y>0 && y<15){
+                //make sure clicked and not draged and clicked
                 if(clicked && hoverLeave){
                      totalPlayTime += currentLevel.playTime;
                     setLevel(LEVEL_MAIN_MENU);
                 }
+                //update drag variable
                 if(!clicked){
                     hoverLeave = true;
                 }
                
             }else{
+                //remove drage variable status
                 hoverLeave = false;
             }
-            
+            //update previous loop time
             prevTime = t;
             break;
+        //if level 1 death
         case LEVEL_DEATH_1:
             if(clicked){
+                //Main menu
                 if(x>100 && x<260 && y>100 && y<150){
                     setLevel(LEVEL_MAIN_MENU);
                 }
+                //respawn button
                 else if(x>100 && x<260 && y>160 && y<210){
                     setLevel(LEVEL_1);
                 }
             }
-            break;  
+            break; 
+        //if level 2 death
         case LEVEL_DEATH_2:
             if(clicked){
+                //main menu button
                 if(x>100 && x<260 && y>100 && y<150){
                     setLevel(LEVEL_MAIN_MENU);
                 }
+                //respawn button
                 else if(x>100 && x<260 && y>160 && y<210){
                     setLevel(LEVEL_2);
                 }
             }
             break;  
+        //Level complete page
         case LEVEL_COMPLETE:
             if(clicked){
+                //main menu button
                 if(x>100 && x<260 && y>160 && y<210){
                     setLevel(LEVEL_MAIN_MENU);
                 }
             }
             break;  
+        //if level 2
         case LEVEL_2:
+            //get current time
             t = TimeNow();
+
+            //clear screen for background
             LCD.Clear();
+
+            //update level
             state = currentLevel.update(x, y, clicked, t - prevTime);
+
+            //check for exit condition (death and completion)
             if(state == STATE_DEATH){
                 setLevel(LEVEL_DEATH_2);
             }else if(state == STATE_COMPLETE){
                 setLevel(LEVEL_COMPLETE);
             }else{
+                //draw entire level
                 currentLevel.drawGameObjects();
             }
+            //click leave button
             if(x>305 && x<320 && y>0 && y<15){
+                //check for click and drag
                 if(clicked && hoverLeave){
                      totalPlayTime += currentLevel.playTime;
                     setLevel(LEVEL_MAIN_MENU);
                 }
+                //update drag status
                 if(!clicked){
                     hoverLeave = true;
                 }
                
             }else{
+                //remove drag status
                 hoverLeave = false;
             }
+            //update loop time
             prevTime = t;
             break;
     }
 }
 
+/*
+*Function for Levels
+*void Levels::setLevel(int l) 
+*   set the current level or page of the menu
+*@param l
+*   level constant of level being changed to
+*Ex. 
+*   Set level to directions if the LEVEL_DIRECTION is passed in
+*Authors: Brandon Y., Aadit S.
+*/
 void Levels::setLevel(int l){
+    //set level
     level = l;
+
+    //draw new level
     draw();
 }
