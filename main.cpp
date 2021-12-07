@@ -127,7 +127,7 @@ void Levels::draw(){
             LCD.WriteAt(totalPlayTime, 200, 80);
             LCD.SetFontColor(GREEN);
             LCD.DrawRectangle(100, 130, 160, 50);
-            LCD.WriteAt("Main Menu", 120, 130);
+            LCD.WriteAt("Main Menu", 120, 150);
             break;
         case LEVEL_CREDITS:
             LCD.SetBackgroundColor(BLACK);
